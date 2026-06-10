@@ -30,7 +30,8 @@ public class RegisterPatientUseCaseTest
                 "Ana Souza",
                 "529.982.247-25",
                 "ana@email.com",
-                "(11)99999-8888"
+                "(11)99999-8888",
+                "1234"
         );
 
         when(gateway.existsByCpf(any())).thenReturn(false);
@@ -47,7 +48,8 @@ public class RegisterPatientUseCaseTest
                 "Ana Souza",
                 "529.982.247-25",
                 "ana@email.com",
-                "(11)99999-8888"
+                "(11)99999-8888",
+                "1234"
         );
 
         when(gateway.existsByCpf(any())).thenReturn(true);

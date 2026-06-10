@@ -1,11 +1,12 @@
 package com.polaris.syscare_backend.infrastructure.security;
 
-import com.polaris.syscare_backend.infrastructure.persistence.user.UserEntity;
-import com.polaris.syscare_backend.infrastructure.persistence.user.UserRepository;
-import com.polaris.syscare_backend.infrastructure.persistence.user.UserRole;
+import com.polaris.syscare_backend.domain.user.User;
+import com.polaris.syscare_backend.domain.user.UserRepository;
+import com.polaris.syscare_backend.domain.user.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,15 +25,19 @@ class SyscareUserDetailsServiceTest
     @Test
     void shouldLoadUserByEmail()
     {
-        var entity = new UserEntity();
-        entity.setId(UUID.randomUUID());
-        entity.setEmail("ana@email.com");
-        entity.setPasswordHash("hashed");
-        entity.setRole(UserRole.PATIENT);
-        entity.setActive(true);
+
+        var user = new User(
+                UUID.randomUUID(),
+                "ana@email.com",
+                "hashed",
+                UserRole.PATIENT,
+                true,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         when(repository.findByEmail("ana@email.com"))
-                .thenReturn(Optional.of(entity));
+                .thenReturn(Optional.of(user));
 
         var userDetails = service.loadUserByUsername("ana@email.com");
 
@@ -45,6 +50,7 @@ class SyscareUserDetailsServiceTest
     @Test
     void shouldThrowWhenUserNotFound()
     {
+
         when(repository.findByEmail("naoexiste@email.com"))
                 .thenReturn(Optional.empty());
 
@@ -56,14 +62,19 @@ class SyscareUserDetailsServiceTest
     @Test
     void shouldThrowWhenUserIsInactive()
     {
-        var entity = new UserEntity();
-        entity.setEmail("inativo@email.com");
-        entity.setPasswordHash("hashed");
-        entity.setRole(UserRole.PATIENT);
-        entity.setActive(false);
+
+        var user = new User(
+                UUID.randomUUID(),
+                "inativo@email.com",
+                "hashed",
+                UserRole.PATIENT,
+                false,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
         when(repository.findByEmail("inativo@email.com"))
-                .thenReturn(Optional.of(entity));
+                .thenReturn(Optional.of(user));
 
         assertThatThrownBy(() -> service.loadUserByUsername("inativo@email.com"))
                 .isInstanceOf(UsernameNotFoundException.class)

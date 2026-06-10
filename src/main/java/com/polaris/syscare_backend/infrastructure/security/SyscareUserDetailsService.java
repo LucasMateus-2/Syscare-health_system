@@ -1,8 +1,7 @@
 package com.polaris.syscare_backend.infrastructure.security;
 
-import com.polaris.syscare_backend.infrastructure.persistence.user.UserEntity;
-import com.polaris.syscare_backend.infrastructure.persistence.user.UserRepository;
-import org.springframework.security.core.userdetails.User;
+import com.polaris.syscare_backend.domain.user.User;
+import com.polaris.syscare_backend.domain.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SyscareUserDetailsService implements UserDetailsService
 {
+
     private final UserRepository userRepository;
 
     public SyscareUserDetailsService(UserRepository userRepository)
@@ -21,18 +21,20 @@ public class SyscareUserDetailsService implements UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException
     {
-        UserEntity user = userRepository.findByEmail(email)
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
 
-        if (!user.isActive())
+        if (!user.active())
         {
-            var usuarioInativo = "Usuário inativo: %s".formatted(email);
-            throw new UsernameNotFoundException(usuarioInativo);
+            throw new UsernameNotFoundException("Usuário inativo: " + email);
         }
-        return User.builder()
-                .username(user.getEmail())
-                .password(user.getPasswordHash())
-                .roles(user.getRole().name())
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.email())
+                .password(user.passwordHash())
+                .roles(user.role().name())
+                .disabled(!user.active())
                 .build();
     }
 }

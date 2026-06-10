@@ -5,7 +5,8 @@ public record RegisterPatientCommand
                 String fullName,
                 String cpf,
                 String email,
-                String phone
+                String phone,
+                String password
         )
 {
 }

@@ -18,10 +18,12 @@ public class SecurityConfig
 {
 
     private final SyscareUserDetailsService userDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;
 
-    public SecurityConfig(SyscareUserDetailsService userDetailsService)
+    public SecurityConfig(SyscareUserDetailsService userDetailsService, JwtAuthFilter jwtAuthFilter)
     {
         this.userDetailsService = userDetailsService;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean

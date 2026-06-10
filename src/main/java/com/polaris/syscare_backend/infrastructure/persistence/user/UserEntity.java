@@ -1,6 +1,8 @@
 package com.polaris.syscare_backend.infrastructure.persistence.user;
 
 
+import com.polaris.syscare_backend.domain.user.User;
+import com.polaris.syscare_backend.domain.user.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,4 +43,31 @@ public class UserEntity
 
     @Column(name = "updated_at")      // ← corrigido
     private LocalDateTime updatedAt;
+
+    // 🔥 E o inverso
+    public static UserEntity fromDomain(User user)
+    {
+        return new UserEntity(
+                user.id(),
+                user.email(),
+                user.passwordHash(),
+                user.role(),
+                user.active(),
+                user.createdAt(),
+                user.updatedAt()
+        );
+    }
+
+    public User toDomain()
+    {
+        return new User(
+                id,
+                email,
+                passwordHash,
+                role,
+                active,
+                createdAt,
+                updatedAt
+        );
+    }
 }
